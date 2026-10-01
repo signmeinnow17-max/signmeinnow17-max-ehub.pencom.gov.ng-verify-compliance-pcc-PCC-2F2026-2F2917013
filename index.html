@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/x-icon" href="favicon.png">
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pencom</title>
+  <style>
+    :root {
+      --green: #1f9d55;
+      --green-light: #e7f8ee;
+      --green-dark: #178a48;
+      --text-main: #111318;
+      --text-sub: #64748b;
+      --border: #e5e7eb;
+      --bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'ClashDisplay', system-ui, Avenir, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .page {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--green);
+      font-weight: 600;
+      font-size: 10px;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Logo */
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 28px 0 20px;
+    }
+
+    .logo-placeholder {
+      width: 74px;
+      height: 82px;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    h1.title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+
+    p.subtitle {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 13px;
+      margin: 0 0 28px;
+    }
+
+    /* Search box */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .search-wrap svg.icon-search {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: #9aa1ab;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 12px;
+      outline: none;
+      transition: border-color .15s ease;
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--green);
+    }
+
+    .suggestions {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      z-index: 5;
+    }
+
+    .suggestions.open {
+      display: block;
+    }
+
+    .suggestion-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+
+    .suggestion-row+.suggestion-row {
+      border-top: 1px solid var(--border);
+    }
+
+    .suggestion-row:hover {
+      background: #f7f8f9;
+    }
+
+    .suggestion-row .s-name {
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0 0 2px;
+    }
+
+    .suggestion-row .s-meta {
+      font-size: 10px;
+      color: var(--text-sub);
+      margin: 0;
+    }
+
+    .suggestion-row svg {
+      width: 18px;
+      height: 18px;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    /* Result card */
+    .card {
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 14px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 480px) {
+      .card-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .badge-wrap {
+        margin-left: 0;
+      }
+    }
+
+    .card-id {
+      display: flex;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 9px;
+      background: #eef0f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      flex-shrink: 0;
+    }
+
+    .avatar svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .card-id h2 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .card-id p {
+      margin: 2px 0 0;
+      color: var(--text-sub);
+      font-size: 11px;
+    }
+
+    .badge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-weight: 700;
+      font-size: 10px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .info-icon {
+      width: 18px;
+      height: 18px;
+      color: #9aa1ab;
+      flex-shrink: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .col h3 {
+      font-size: 12px;
+      font-weight: 800;
+      margin: 0 0 16px;
+    }
+
+    .field {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field svg {
+      width: 17px;
+      height: 17px;
+      color: #9aa1ab;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .field-label {
+      font-size: 10px;
+      color: var(--text-sub);
+      margin: 0 0 2px;
+    }
+
+    .field-value {
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .field-value.mono {
+      font-family: "Montserrat", Consolas, monospace;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12px;
+      padding: 30px 0;
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      h1.title {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page">
+
+    <button class="back-btn" type="button" onclick="window.location.href='https://ehub.pencom.gov.ng/login'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Back
+    </button>
+
+
+    <div class="logo-wrap">
+      <div class="logo-placeholder">
+        <img src="pencom_logo_transparent.png">
+      </div>
+    </div>
+
+    <h1 class="title">Verify a company's compliance status</h1>
+    <p class="subtitle">Search for a company to check their PenCom compliance status</p>
+
+    <div class="search-wrap">
+      <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input id="searchInput" type="text" value="PREMIER PROJECTS NIGERIA LIMITED"
+        placeholder="Enter company name,RC number, Compliance code, or PCC number..." autocomplete="off">
+      <div id="suggestions" class="suggestions"></div>
+    </div>
+
+
+    <div id="results"></div>
+
+  </div>
+
+  <script>
+    // Sample coursemate data — swap in your real classmates' details here.
+    const coursemates = [
+      {
+        name: "PREMIER PROJECTS NIGERIA LIMITED",
+        course: "Private",
+        status: "Active PCC",
+        matric: "9377207",
+        assignments: "3 employees",
+        projectId: "PCC/2026/2917013",
+        dueDate: "December 31, 2026",
+        initials: "PR"
+      },
+      {
+        name: "REGALIA MARINE LIMITED",
+        course: "Private",
+        status: "Active PCC",
+        matric: "8274617",
+        assignments: "3 employees",
+        projectId: "PCC/2026/2916643",
+        dueDate: "December 31, 2026",
+        initials: "FA"
+      },
+      {
+        name: "BEACONGATE LIMITED",
+        course: "Private",
+        status: "Active PCC",
+        matric: "1239472",
+        assignments: "33 employees",
+        projectId: "PCC/2026/000914",
+        dueDate: "December 31, 2026",
+        initials: "BL"
+      },
+      {
+        name: "CCK ELECTRIC POWER TECHNOLOGY COMPANY LTD",
+        course: "Private",
+        status: "Active PCC",
+        matric: "7476838",
+        assignments: "3 employees",
+        projectId: "PCC/2026/2916889",
+        dueDate: "December 31, 2026",
+        initials: "FA"
+      }
+    ];
+
+    const resultsEl = document.getElementById("results");
+    const searchEl = document.getElementById("searchInput");
+    const suggestionsEl = document.getElementById("suggestions");
+
+    function buildingIcon() {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="9" y1="6" x2="15" y2="6"></line><line x1="9" y1="10" x2="15" y2="10"></line><line x1="9" y1="14" x2="12" y2="14"></line></svg>';
+    }
+    function badgeIcon() {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 11 15 16 9"></polyline></svg>';
+    }
+    function fileIcon() {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>';
+    }
+    function usersIcon() {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>';
+    }
+    function calendarIcon() {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>';
+    }
+    function infoIcon() {
+      return '<svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+    }
+
+    function cardHTML(person) {
+      return `
+      <div class="card">
+        <div class="card-top">
+          <div class="card-id">
+            <div class="avatar">${buildingIcon()}</div>
+            <div>
+              <h2>${person.name}</h2>
+              <p>${person.course}</p>
+            </div>
+          </div>
+          <div class="badge-wrap">
+            <span class="badge">${badgeIcon()} ${person.status}</span>
+            ${infoIcon()}
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col">
+            <h3>Company Information</h3>
+            <div class="field">
+              ${fileIcon()}
+              <div>
+                <p class="field-label">RC Number</p>
+                <p class="field-value mono">${person.matric}</p>
+              </div>
+            </div>
+            <div class="field">
+              ${usersIcon()}
+              <div>
+                <p class="field-label">Employees (December 2025)</p>
+                <p class="field-value">${person.assignments}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <h3>PCC Status</h3>
+            <div class="field">
+              ${fileIcon()}
+              <div>
+                <p class="field-label">Certificate ID</p>
+                <p class="field-value mono">${person.projectId}</p>
+              </div>
+            </div>
+            <div class="field">
+              ${calendarIcon()}
+              <div>
+                <p class="field-label">Valid Until</p>
+                <p class="field-value">${person.dueDate}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    }
+
+    function renderCard(person) {
+      if (!person) {
+        resultsEl.innerHTML = '<p class="empty">No coursemate found. Try a different name or matric number.</p>';
+        return;
+      }
+      resultsEl.innerHTML = cardHTML(person);
+    }
+
+    function matchAll(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      return coursemates.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        p.matric.toLowerCase().includes(q) ||
+        p.course.toLowerCase().includes(q) ||
+        p.projectId.toLowerCase().includes(q)
+      );
+    }
+
+    function suggestionRow(person) {
+      return `
+      <div class="suggestion-row" data-name="${person.name}">
+        <div>
+          <p class="s-name">${person.name}</p>
+          <p class="s-meta">${person.matric} &middot; ${person.course}</p>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 11 15 16 9"></polyline></svg>
+      </div>
+    `;
+    }
+
+    function openSuggestions(matches) {
+      if (matches.length === 0) {
+        suggestionsEl.classList.remove("open");
+        suggestionsEl.innerHTML = "";
+        return;
+      }
+      suggestionsEl.innerHTML = matches.map(suggestionRow).join("");
+      suggestionsEl.classList.add("open");
+    }
+
+    function closeSuggestions() {
+      suggestionsEl.classList.remove("open");
+      suggestionsEl.innerHTML = "";
+    }
+
+    searchEl.addEventListener("input", () => {
+      const query = searchEl.value;
+      if (!query.trim()) {
+        closeSuggestions();
+        renderCard(coursemates[0]); // default card when search is empty
+        return;
+      }
+      const matches = matchAll(query);
+      openSuggestions(matches);
+      renderCard(matches[0] || null);
+    });
+
+    suggestionsEl.addEventListener("click", (e) => {
+      const row = e.target.closest(".suggestion-row");
+      if (!row) return;
+      const person = coursemates.find(p => p.name === row.dataset.name);
+      searchEl.value = person.name;
+      closeSuggestions();
+      renderCard(person);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".search-wrap")) closeSuggestions();
+    });
+
+    // Show one card by default before any search
+    renderCard(coursemates[0]);
+  </script>
+
+</body>
+
+</html>
